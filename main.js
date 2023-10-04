@@ -1,5 +1,6 @@
 (() => {
   // Этап 1. Создал функцию, генерирующую массив парных чисел. Пример массива, который должна возвратить функция: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8].count - количество пар.
+  
   const numArray = [];
   function createNumbersArray(count) {
     for (let i = 0; i < count; i++) {
@@ -32,7 +33,40 @@
   }
 
 
-  // Этап 3. Использую две созданные функции для создания массива перемешанными номерами. На основе этого массива вы можете создать DOM-элементы карточек. У каждой карточки будет свой номер из массива произвольных чисел. Вы также можете создать для этого специальную функцию. count - количество пар.
+  // Этап 3. создаем счетчик время
+
+  let totalSeconds = 0;
+  let minutesLabel = document.getElementById("minutes");
+  let secondsLabel = document.getElementById("seconds");
+  let intervalId; // Переменная для хранения идентификатора интервала
+
+  function setTime() {
+    ++totalSeconds;
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
+    minutesLabel.innerHTML = pad(minutes);
+    secondsLabel.innerHTML = pad(seconds);
+  }
+
+  function pad(val) {
+    let valString = val + "";
+    if (valString.length < 2) {
+      return "0" + valString;
+    } else {
+      return valString;
+    }
+  }
+
+  // Запускаем таймер и сохраняем идентификатор интервала
+  intervalId = setInterval(setTime, 1000);
+
+  // Функция для остановки таймера
+  function stopTimer() {
+    clearInterval(intervalId); // Останавливаем интервал
+  }
+
+
+  // Этап 4. Использую две созданные функции для создания массива перемешанными номерами. На основе этого массива вы можете создать DOM-элементы карточек. У каждой карточки будет свой номер из массива произвольных чисел. Вы также можете создать для этого специальную функцию. count - количество пар.
 
   function startGame(count) {
     return shuffle(createNumbersArray(count));
@@ -46,7 +80,9 @@
   // вызываем функцию где цифр будет равно кол во карточек и делим на два( тк числы в игре должен быть парными)
   startGame(btnCards.length / 2);
 
-  //Этап 4. создаем функции создание карточек
+  
+  //Этап 5. создаем функции создание карточек
+
   const createCardNum = () => {
     for (let i = 0; i < btnCards.length; i++) {
       btnCards[i].textContent = numArray[i];
@@ -82,13 +118,14 @@
             setTimeout(() => {
               firstCard.classList.remove('btn-open');
               secondCard.classList.remove('btn-open');
-            }, 400);
+            }, 300);
           };
         };
 
         if (numArray.length === document.querySelectorAll('.btn-success').length) {
           setTimeout(() => {
-            alert("Молодец!");
+            alert(`Молодец! Вы нашли все пары за ${minutesLabel.textContent} минут ${secondsLabel.textContent} секунд`);
+            stopTimer();
           }, 500);
         };
       });
